@@ -60,7 +60,7 @@ char* xor(const char* str, int strSize, const char* key, int keylen){
 
 int main(int argc, char** argv){
     if(argc != 4 || ((strcmp(argv[1], "-d") != 0 && strcmp(argv[1], "-e") != 0 && strcmp(argv[1], "-D") != 0 && strcmp(argv[1], "-E") != 0))){
-        printf("Please use one of the folloing formats:\n\nDecryption:\n./sxor -d <filename_in> <key_file>\n\nOR\n\nEncryption:\n./sxor -e <filename_in> <key_length>\n\n");
+        printf("Please use one of the folloing formats:\n\nDecryption:\n./fxor -d <filename_in> <key_file>\n\nOR\n\nEncryption:\n./fxor -e <filename_in> <key_length>\n\n");
         return 1;
     }
     //Reading in the string from the given file
