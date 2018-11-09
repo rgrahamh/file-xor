@@ -10,24 +10,32 @@ In order to build the program, please use the following format:
 ```
 ## Usage
 ### Encryption
-For encryption, please use the following format:
+For encryption, please use the following format (optional options are in [], required options are in <>):
 ```
-> ./fxor -e <file_in> <key_len>
+> ./fxor -e <file_in> <key_len> [output_file]
 ```
 So, if you were to input the following example:
 ```
 > ./fxor -e peacemaker.txt 256
 ```
-The output would be a file named `peacemaker.txt.enc` (the encrypted string) and `peacemaker.txt.key` (a file containing the key).
+The output would be a file named `peacemaker.txt.enc` (the encrypted string) and `peacemaker.txt.key` (a file containing the key). You could also include an output file:
+```
+> ./fxor -e peacemaker.txt 256 encrypted.txt
+```
+Which would generate a file named `encrypted.txt` with the encrypted contents and a key file called `encrypted.txt.key`.
 ### Decryption
 For decryption, please use the following format:
 ```
-> ./fxor -d <encrypted_file> <key_file>
+> ./fxor -d <encrypted_file> <key_file> [output_file]
 ```
 So, if we were to run this after the last example, we would run:
 ```
 > ./fxor -d peacemaker.txt.enc peacemaker.txt.key
 ```
-And the decrypted output would be sent to `peacemaker.txt`.
+And the decrypted output would be sent to `peacemaker.txt`. You could also give an output file as an optional last option:
+```
+> ./fxor -d peacemaker.txt.enc peacemaker.txt.key decrypted.txt
+```
+Which would send the decrypted contents to of `peacemaker.txt.enc` to `decrypted.txt`.
 ## Credit
 Programmed by Ryan Houck (rgrahamh).

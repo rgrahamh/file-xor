@@ -1,11 +1,13 @@
 //Author: Ryan Houck
-//Last modificaiton: Nov. 7, 2018
+//Last modificaiton: Nov. 9, 2018
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <time.h>
+#if defined(unix) || defined(__unix) || defined(__unix__)
+#include <unistd.h>
+#endif
 
 #define ROTATE_RIGHT 2
 #define ROTATE_LEFT 3
@@ -58,8 +60,15 @@ char* xor(const char* str, int strSize, const char* key, int keylen){
     return tempStr;
 }
 
+//ARGUMENTS
+//argv[1] - Option (-e/-d)
+//argv[2] - The name of the file to be encrypted/decrypted
+//argv[3] - The key file or the length of key (depending on encryption or decryption)
+//
+//OPTIONAL ARGUMENTS
+//argv[4] - The output file
 int main(int argc, char** argv){
-    if(argc != 4 || ((strcmp(argv[1], "-d") != 0 && strcmp(argv[1], "-e") != 0 && strcmp(argv[1], "-D") != 0 && strcmp(argv[1], "-E") != 0))){
+    if((argc != 4 && argc != 5) || ((strcmp(argv[1], "-d") != 0 && strcmp(argv[1], "-e") != 0 && strcmp(argv[1], "-D") != 0 && strcmp(argv[1], "-E") != 0))){
         printf("Please use one of the folloing formats:\n\nDecryption:\n./fxor -d <filename_in> <key_file>\n\nOR\n\nEncryption:\n./fxor -e <filename_in> <key_length>\n\n");
         return 1;
     }
@@ -106,8 +115,8 @@ int main(int argc, char** argv){
         #else
         srand(time(NULL));
         #endif
-        char* keyFile = malloc(fileNameLen + 5);
-        strcpy(keyFile, argv[2]);
+        char* keyFile = malloc(((argc == 5)? strlen(argv[4]) : fileNameLen) + 5);
+        strcpy(keyFile, (argc == 5)? argv[4] : argv[2]);
         strcat(keyFile, ".key\0");
         key = malloc(atoi(argv[3]));
         file = fopen(keyFile, "w");
@@ -129,19 +138,21 @@ int main(int argc, char** argv){
 
     //Generating the output file
     char* outFileStr;
-    if(strcmp(&(argv[2][fileNameLen-4]), ".enc") == 0){
-        outFileStr = malloc(fileNameLen-4);
-        for(int i = 0; i < fileNameLen-4; i++){
-            outFileStr[i] = argv[2][i];
+    if(argc != 5){
+        if(strcmp(&(argv[2][fileNameLen-4]), ".enc") == 0){
+            outFileStr = malloc(fileNameLen-4);
+            for(int i = 0; i < fileNameLen-4; i++){
+                outFileStr[i] = argv[2][i];
+            }
+            outFileStr[fileNameLen-4] = '\0';
         }
-        outFileStr[fileNameLen-4] = '\0';
+        else{
+            outFileStr = malloc(fileNameLen + 5);
+            strcpy(outFileStr, argv[2]);
+            strcat(outFileStr, ".enc\0");
+        }
     }
-    else{
-        outFileStr = malloc(fileNameLen + 5);
-        strcpy(outFileStr, argv[2]);
-        strcat(outFileStr, ".enc\0");
-    }
-    file = fopen(outFileStr, "w");
+    file = fopen((argc == 5)? argv[4] : outFileStr, "w");
     if(file == NULL){
         printf("Could not open the file for writing.\n");
         for(int i = 0; i < strSize; i++){
@@ -155,7 +166,7 @@ int main(int argc, char** argv){
             fprintf(file, "%c", str[i]);
         }
         fclose(file);
-        printf("Output successfully written to %s\n", outFileStr);
+        printf("Output successfully written to %s\n", (argc == 5)? argv[4] : outFileStr);
     }
     return 0;
 }
