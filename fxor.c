@@ -72,20 +72,28 @@ int main(int argc, char** argv){
         printf("Please use one of the folloing formats:\n\nDecryption:\n./fxor -d <filename_in> <key_file>\n\nOR\n\nEncryption:\n./fxor -e <filename_in> <key_length>\n\n");
         return 1;
     }
+
     //Reading in the string from the given file
-    char* str = malloc(1);
     int fileNameLen = strlen(argv[2]);
     FILE* file = fopen(argv[2], "r");
+
+    //Checking to make sure the file could be opened
     if(file == NULL){
         printf("Could not find the file \"%s\".\n", argv[2]);
         return 2;
     }
+
+    //Get the content size
+    fseek(file, 0, SEEK_END);
+    int strSize = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    char* str = (char*)malloc(strSize);
+
+    //Read the file contents into str
     char tempChar = getc(file);
-    int strSize = 0;
-    while(!feof(file)){
-        str[strSize++] = tempChar;
+    for(int i = 0; !feof(file); i++){
+        str[i] = tempChar;
         tempChar = getc(file);
-        str = realloc(str, strSize+1);
     }
     fclose(file);
 
@@ -128,7 +136,7 @@ int main(int argc, char** argv){
             fprintf(file, "%c", key[keylen]);
         }
         fclose(file);
-        printf("key successfully written to %s\n", keyFile);
+        printf("Key successfully written to %s\n", keyFile);
     }
     
     //If the key is not 0 length (no encryption), run the xor
