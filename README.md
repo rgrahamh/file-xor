@@ -10,7 +10,7 @@ In order to build the program, please use the following format:
 ```
 ## Usage
 ### Encryption
-For encryption, please use the following format (optional options are in [], required options are in <>):
+For encryption, please use the following format (optional params are in [], required params are in <>):
 ```
 > ./fxor -e <file_in> <key_len> [output_file]
 ```
